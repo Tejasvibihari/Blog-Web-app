@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 
-let posts;
+// const posts = [];
 
 
 app.get("/", (req, res) => {
@@ -60,18 +60,28 @@ app.get("/compose", (req, res) => {
 });
 
 
-app.get("/posts/:postName", (req, res) => {
-  const requestedTitle = _.lowerCase(req.params.postName);
+// app.get("/posts/:postName", (req, res) => {
+//   const requestedTitle = _.lowerCase(req.params.postName);
 
-  posts.forEach((post) => {
-    const storedTitle = _.lowerCase(post.postTitle);
+//   posts.forEach((post) => {
+//     const storedTitle = _.lowerCase(post.postTitle);
 
-    if (storedTitle === requestedTitle) {
-      return res.render("post.ejs", ({ title: post.postTitle, content: post.postBody }))
-    }
+//     if (storedTitle === requestedTitle) {
+//       return res.render("post.ejs", ({ title: post.postTitle, content: post.postBody }))
+//     }
+//   });
+// });
+app.get("/posts/:postId", function (req, res) {
+  const requestedPostId = req.params.postId;
+
+  // Find post by id
+  Post.findOne({ _id: requestedPostId }).then((post) => {
+    res.render("post.ejs", {
+      title: post.title,
+      content: post.body,
+    });
   });
 });
-
 
 app.post("/compose", (req, res) => {
   const postTitle = req.body["title"];
@@ -79,7 +89,7 @@ app.post("/compose", (req, res) => {
   // var blogPost = {
 
   // };
-  posts = new Blog({
+  const posts = new Post({
     title: postTitle,
     body: postBody,
   });
